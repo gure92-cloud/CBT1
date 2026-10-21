@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전자기기생산 CBT 연습</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 좁은 단일 칼럼 문제지 + 상단 고정 탭 바. 색은 안전보건표지 체계(지시=파랑, 경고=노랑, 안내=녹색, 금지=빨강)에서 가져옴 */
+:root{
+  --bg:#f3f5f8; --paper:#ffffff; --ink:#18212e; --muted:#5b6676; --line:#d9dfe7;
+  --sign-blue:#1d5aa6; --sign-blue-soft:#e6eef8; --sign-yellow:#f2b705; --sign-yellow-soft:#fdf4d6;
+  --sign-green:#1c7a4a; --sign-green-soft:#e3f2ea; --sign-red:#c0352b; --sign-red-soft:#fbe7e5;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151d; --paper:#18202b; --ink:#e7ecf2; --muted:#9aa6b6; --line:#2b3644;
+  --sign-blue:#6aa3ea; --sign-blue-soft:#1a2b42; --sign-yellow:#f5c536; --sign-yellow-soft:#3a3115;
+  --sign-green:#5cc48d; --sign-green-soft:#163126; --sign-red:#ef7b70; --sign-red-soft:#3b1d1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151d; --paper:#18202b; --ink:#e7ecf2; --muted:#9aa6b6; --line:#2b3644;
+  --sign-blue:#6aa3ea; --sign-blue-soft:#1a2b42; --sign-yellow:#f5c536; --sign-yellow-soft:#3a3115;
+  --sign-green:#5cc48d; --sign-green-soft:#163126; --sign-red:#ef7b70; --sign-red-soft:#3b1d1b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--sign-blue);outline-offset:2px}
+
+header.top{padding-block:28px 18px;display:grid;gap:10px}
+.hazard{height:6px;border-radius:3px;background:repeating-linear-gradient(-45deg,var(--sign-yellow) 0 12px,var(--ink) 12px 24px);max-width:120px}
+h1{font-size:clamp(22px,4.6vw,30px);line-height:1.25;margin:0;font-weight:700;text-wrap:balance;letter-spacing:-.01em}
+.meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.meta b{color:var(--ink);font-weight:600}
+.who{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.who label{font-size:13px;color:var(--muted)}
+.who input{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:6px 10px;width:12em;max-width:100%}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.unitrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.unit{border:1.5px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 6px;cursor:pointer;text-align:center;display:grid}
+.unit .t{font-weight:700;font-size:14.5px}
+.unit .s{font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.unit[aria-selected="true"]{border-color:var(--sign-yellow);background:var(--sign-yellow-soft);box-shadow:inset 0 -3px 0 var(--sign-yellow)}
+.tabrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tab{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 6px;cursor:pointer;text-align:center;display:grid;gap:0}
+.tab .t{font-weight:600;font-size:14px}
+.tab .s{font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--sign-blue);border-color:var(--sign-blue);color:#fff}
+.tab[aria-selected="true"] .s{color:#dfe9f7}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{border-color:var(--sign-blue);background:var(--sign-blue-soft);color:var(--sign-blue);font-weight:600}
+.chip .k{font-family:var(--font-num);font-weight:600;margin-right:4px}
+.tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:5px 11px;font-size:13px;cursor:pointer}
+.btn.primary{background:var(--sign-blue);border-color:var(--sign-blue);color:#fff;font-weight:600}
+.btn:hover{border-color:var(--sign-blue)}
+.toggle{display:inline-flex;gap:5px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+
+.score{margin-block:16px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+.score .head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline}
+.score .big{font-family:var(--font-num);font-size:22px;font-weight:600}
+.score .big small{font-size:13px;color:var(--muted);font-weight:500}
+.bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 16px}
+.bar{display:grid;grid-template-columns:1.6em 1fr auto;gap:6px;align-items:center;font-size:12px}
+.bar .k{font-family:var(--font-num);font-weight:600;color:var(--sign-blue)}
+.bar .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;background:var(--sign-green)}
+.bar .n{font-family:var(--font-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+
+.areahead{margin-block:26px 8px;display:flex;gap:10px;align-items:baseline}
+.areahead .k{font-family:var(--font-num);font-weight:600;background:var(--sign-yellow);color:#18212e;border-radius:4px;padding:0 7px;font-size:13px}
+.areahead h2{font-size:16px;margin:0;font-weight:600}
+.areahead .c{font-size:12px;color:var(--muted);font-family:var(--font-num)}
+
+.q{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin-bottom:10px;display:grid;gap:10px;border-left:4px solid var(--line)}
+.q.ok{border-left-color:var(--sign-green)}
+.q.ng{border-left-color:var(--sign-red)}
+.qhead{display:flex;gap:10px;align-items:flex-start}
+.qno{font-family:var(--font-num);font-weight:600;font-size:13px;color:var(--sign-blue);min-width:3.2em;padding-top:1px}
+.qtext{min-width:0;flex:1;font-weight:500}
+.qtext .blank{display:inline-block;min-width:3.4em;border-bottom:2px solid var(--sign-blue);text-align:center;font-family:var(--font-num);font-weight:600;color:var(--sign-blue);margin-inline:2px}
+.ox{display:flex;gap:8px;padding-left:calc(3.2em + 10px)}
+.oxb{width:56px;height:44px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font-size:20px;font-weight:700;cursor:pointer;font-family:var(--font-num)}
+.oxb[aria-pressed="true"]{border-color:var(--sign-blue);background:var(--sign-blue-soft);color:var(--sign-blue)}
+.opts{display:grid;gap:4px;padding-left:calc(3.2em + 10px)}
+.opt{display:grid;grid-template-columns:auto 1.6em 1fr;gap:6px;align-items:start;padding:5px 8px;border-radius:6px;border:1px solid transparent;cursor:pointer}
+.opt:hover{background:var(--bg)}
+.opt input{margin-top:5px;accent-color:var(--sign-blue)}
+.q.ok .opt,.q.ng .opt{cursor:default}
+.oxb:disabled{cursor:default;opacity:.85}
+.fill-row input:disabled{color:var(--ink);opacity:1}
+.opt .n{font-family:var(--font-num);color:var(--muted)}
+.opt span:last-child{min-width:0}
+.opt.right{background:var(--sign-green-soft)}
+.opt.miss{background:var(--sign-green-soft);outline:1.5px dashed var(--sign-green)}
+.opt.wrong{background:var(--sign-red-soft)}
+.fills{display:grid;gap:6px;padding-left:calc(3.2em + 10px)}
+.fill-row{display:flex;gap:8px;align-items:center}
+.fill-row .lab{font-family:var(--font-num);font-weight:600;color:var(--sign-blue);width:1.8em}
+.fill-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 10px}
+.fill-row input.right{border-color:var(--sign-green);background:var(--sign-green-soft)}
+.fill-row input.wrong{border-color:var(--sign-red);background:var(--sign-red-soft)}
+.qfoot{display:flex;gap:8px;align-items:center;padding-left:calc(3.2em + 10px);flex-wrap:wrap}
+.verdict{font-size:13px;font-weight:600}
+.verdict.ok{color:var(--sign-green)} .verdict.ng{color:var(--sign-red)}
+.ans{padding:10px 12px;border-radius:8px;background:var(--sign-yellow-soft);font-size:13.5px;margin-left:calc(3.2em + 10px);display:grid;gap:3px}
+.ans .a{font-weight:600}
+.ans .x{color:var(--muted)}
+.type-tag{font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted);margin-left:6px;white-space:nowrap}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+.copybox{width:100%;min-height:120px;font-family:var(--font-num);font-size:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:8px}
+footer{margin-top:30px;font-size:12px;color:var(--muted);display:grid;gap:4px}
+@media (max-width:520px){
+  .ox,.opts,.fills,.qfoot,.ans{padding-left:0;margin-left:0}
+  .qno{min-width:2.8em}
+}
+@media print{
+  nav.tabs,.score,.qfoot,.who,.tools{display:none!important}
+  body{background:#fff;color:#000}
+  .q{break-inside:avoid;border:1px solid #bbb}
+}
+
+.report{margin-block:16px;background:var(--paper);border:2px solid var(--sign-blue);border-radius:12px;padding:16px;display:grid;gap:14px}
+.report h2{margin:0;font-size:19px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.report h2 small{font-size:13px;font-weight:500;color:var(--muted)}
+.report h3{margin:0 0 6px;font-size:15px}
+.rp-total{display:flex;flex-wrap:wrap;gap:10px}
+.rp-total div{flex:1 1 140px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid}
+.rp-total b{font-family:var(--font-num);font-size:24px}
+.rp-total span{font-size:12px;color:var(--muted)}
+.rp-wrap{overflow-x:auto}
+.rp-table{border-collapse:collapse;width:100%;min-width:480px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rp-table th,.rp-table td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+.rp-table th{background:var(--bg);font-weight:600}
+.rp-table td:first-child,.rp-table th:first-child{text-align:left}
+.rp-table tr.sum td{font-weight:700;background:var(--sign-blue-soft)}
+.grade{display:inline-block;min-width:2.2em;border-radius:4px;padding:0 6px;font-weight:700;font-family:var(--font-num)}
+.g-hi{background:var(--sign-green-soft);color:var(--sign-green)} .g-mid{background:var(--sign-yellow-soft);color:var(--ink)} .g-lo{background:var(--sign-red-soft);color:var(--sign-red)}
+.rp-areas{display:grid;gap:4px}
+.rp-area{display:grid;grid-template-columns:2.2em minmax(0,15em) 1fr 6.5em 3em;gap:8px;align-items:center;font-size:13px}
+@media (max-width:560px){.rp-area{grid-template-columns:2.2em 1fr 5.5em 3em}.rp-area .bar2{display:none}}
+.rp-area .nm{min-width:0}
+.rp-area .k{font-family:var(--font-num);font-weight:600;color:var(--sign-blue)}
+.rp-area .bar2{height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+.rp-area .bar2 i{display:block;height:100%;background:var(--sign-green)}
+.rp-area.weak .bar2 i{background:var(--sign-red)}
+.rp-area .v{font-family:var(--font-num);text-align:right;color:var(--muted)}
+.rp-wrong{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.rp-wrong li{border-left:3px solid var(--sign-red);background:var(--bg);border-radius:6px;padding:8px 10px;font-size:13.5px;display:grid;gap:2px}
+.rp-wrong .meta2{font-size:12px;color:var(--muted)}
+.rp-wrong .my{color:var(--sign-red)} .rp-wrong .ok{color:var(--sign-green);font-weight:600}
+.rp-tools{display:flex;flex-wrap:wrap;gap:6px}
+.done-banner{background:var(--sign-green-soft);color:var(--sign-green);border-radius:8px;padding:8px 12px;font-weight:600;font-size:14px}
+@media print{.report{border:1px solid #888}.rp-tools{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="hazard" aria-hidden="true"></div>
+    <h1>전자기기생산 통합 문제은행 2회 · 단위별 15문항</h1>
+    <div class="meta">
+      <span>전자기기생산_L2 · 지금 푸는 단위 <b id="ucode"></b></span>
+      <span>능력단위 <b>3</b>개 · 단위마다 OX <b>5</b> · 다중선택 <b>5</b> · 빈칸/단답 <b>5</b></span>
+      <span>총 <b>45</b>문항</span>
+    </div>
+    <div class="who">
+      <label for="stu">이름(학번)</label>
+      <input id="stu" type="text" placeholder="예: 2학년 3반 홍길동" autocomplete="off">
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="문제 유형">
+    <div class="unitrow" role="tablist" id="unitrow" aria-label="능력단위"></div>
+    <div class="tabrow" role="tablist" id="tabrow"></div>
+    <div class="chips" id="chips" aria-label="영역 필터"></div>
+    <div class="tools">
+      <button class="btn primary" id="gradeAll" type="button">보이는 문제 모두 채점</button>
+      <button class="btn" id="resetTab" type="button">다시 풀기</button>
+      <button class="btn" id="showReport" type="button">성적표</button>
+      <button class="btn" id="copyRes" type="button">결과 복사</button>
+    </div>
+  </nav>
+
+  <section class="report" id="report" hidden aria-live="polite"></section>
+  <section class="score" id="score" aria-live="polite"></section>
+  <div id="copyWrap" hidden><textarea class="copybox" id="copyText" readonly aria-label="복사할 결과"></textarea><p class="note">자동 복사가 막혀 있으면 위 내용을 길게 눌러 복사하세요.</p></div>
+
+  <main id="list"></main>
+
+  <footer>
+    <span>출처: NCS 학습모듈 「전자제품생산 안전관리」(LM1902010212), 「전자제품 출하관리」(LM1902010210), 「전자부품 생산활동」(LM1902020208), 수업 요약 자료, 일학습병행 지필평가 기출.</span>
+    <span>수치와 기준은 교재 기준입니다. 안전관리의 교육 시간은 현행 법령과 다를 수 있으니 시험 범위 기준을 따르세요.</span>
+  </footer>
+</div>
+
+<script>
+function pick(arr,n,fb){arr=arr.filter(x=>!x.en);const seen=new Set(),out=[];const ar=x=>Array.isArray(x)?x[0]:x.a;for(const x of arr){if(out.length<n&&!seen.has(ar(x))){seen.add(ar(x));out.push(x)}}for(const x of arr){if(out.length<n&&!out.includes(x))out.push(x)}if(fb&&!out.some(x=>x.t==="s")){const s=arr.find(x=>x.t==="s");if(s)out[out.length-1]=s}return arr.filter(x=>out.includes(x))}
+const UNITS=[
+(function(){
+const AREAS = {
+  A: "안전관리 용어·산업안전보건법",
+  B: "안전보건관리 계획·위험성 평가",
+  C: "법정 안전보건교육",
+  E: "교육 원칙·단계별 교육·교육 방법",
+  D: "작업환경 관리·환경관리 프로세스",
+  F: "표지·보호구·방호조치·MSDS",
+  G: "작업환경 측정·안전점검",
+  H: "점검 결과 후속조치"
+};
+
+const OX = [
+["A","위험성 평가는 작업장에서 발생하는 유해 인자에 근로자가 얼마나 노출되는지 측정·평가하는 것이다.","X","설명은 작업환경 측정이다. 위험성 평가는 빈도와 중대성을 추정·결정하고 감소 대책을 수립·실행하는 과정이다."],
+["A","산업안전보건법은 근로자의 생명과 신체 안전을 도모하고 건강을 유지·증진시키기 위한 근로자 보호 제도이다.","O","산업안전보건법의 개념이다."],
+["B","‘부족한 본질 안전화’는 관리적 위험 요인에 해당한다.","X","기계적 위험 요인이다."],
+["C","특별교육은 유해하거나 위험한 작업에 근로자를 근무하게 할 때 실시하는 교육이다.","O","유해·위험 작업 시 그 업무와 관계되는 특별교육을 해야 한다."],
+["C","사업주가 특별교육을 실시했더라도 같은 업무로 신규 채용된 근로자에게는 채용 시 교육을 다시 해야 한다.","X","특별교육을 이수한 근로자의 같은 업무 신규 채용·작업내용 변경 시 교육은 면제한다."],
+["E","시청각 교육법은 교육 매체를 이용해 학습 효과를 높이고 다수의 대상자를 동시에 교육할 수 있다.","O","시청각 교육법의 장점이다."],
+["D","격리는 작업자와 유해 인자 사이에 장벽을 두는 것으로, 시간·공간·물체 등이 장벽이 될 수 있다.","O","자동 시설에 의한 원격 조정도 장벽에 해당한다."],
+["F","안전모는 2미터 이상 높이에서 추락 위험이 있는 작업에만 지급한다.","X","안전모는 물체가 떨어지거나 추락할 위험이 있는 작업에 지급한다. 2미터 이상 추락 위험은 안전대 지급 기준이다."],
+["G","소음 외 다른 인자의 작업환경 측정 결과가 최근 2회 연속 노출 기준 미만이면 연 1회 측정할 수 있다.","O","연 1회 대상."],
+["H","경미한 부적합 사항이라도 반드시 장기 개선 계획서를 작성해 승인을 받은 후에 조치해야 한다.","X","경미한 부적합 사항은 신속히 조치한 뒤 결과를 관리 책임자에게 통보한다."]
+];
+
+const MC = [
+["A","안전관리자의 직무가 아닌 것을 모두 고르시오.",["의무안전인증 대상 기계·기구 구입 시 적격품 선정","위험성 평가에 관한 보좌 및 조언·지도","사업장 안전교육 계획의 수립 및 실시","사업장 순회 점검·지도 및 조치의 건의","*국소 배기 장치 및 환기 장치의 점검","*작업장 정리 정돈 및 통로 확보 확인·감독","*중대재해 발생 시 작업의 중지 및 재개"],"국소 배기 점검은 보건관리자, 정리 정돈 감독은 관리감독자, 작업 중지·재개는 안전보건총괄책임자의 직무이다."],
+["A","중대재해에 해당하지 않는 것을 모두 고르시오.",["사망자가 1명 이상 발생한 재해","3개월 이상 요양 부상자가 동시에 2명 이상 발생한 재해","부상자 또는 직업성 질병자가 동시에 10명 이상 발생한 재해","*3개월 이상 요양 부상자가 1명 발생한 재해","*1개월 요양 부상자가 동시에 3명 발생한 재해","*부상자가 동시에 5명 발생한 재해"],"중대재해 3가지 기준에 미달하는 경우를 고른다."],
+["B","위험성 평가의 목적에 해당하는 것을 모두 고르시오.",["*비상시 대응 조치의 개선","*제품 생산 공정 동안의 사고 감소","책임의 소재를 명확하게 함","산업안전보건에 관한 기준 확립","쾌적한 작업환경 조성","생산량 증대"],"책임 소재, 기준 확립, 쾌적한 작업환경은 산업안전보건법의 목적이다."],
+["C","근로자 정기 안전보건교육 내용이 아닌 것을 모두 고르시오.",["산업안전 및 사고 예방에 관한 사항","산업보건 및 직업병 예방에 관한 사항","건강 증진 및 질병 예방에 관한 사항","유해·위험 작업환경 관리에 관한 사항","*정리 정돈 및 청소에 관한 사항","*작업 개시 전 점검에 관한 사항","*관리감독자의 역할과 임무에 관한 사항"],"정리 정돈·작업 개시 전 점검은 채용 시 교육, 관리감독자 역할은 관리감독자 정기교육 내용이다."],
+["C","안전보건 교육일지의 ‘교육의 구분’에 표시하는 교육을 모두 고르시오.",["*신규 채용 시 교육","*작업 내용 변경 시 교육","*관리감독자 교육","퇴직 시 교육","승진 교육","휴직 복귀 교육"],"신규 채용 시, 작업 내용 변경 시, 특별 안전보건, 일반 안전보건, 관리감독자, 기타 교육 중 표시한다."],
+["E","강의법에 대한 설명으로 옳은 것을 모두 고르시오.",["*상대적으로 많은 인원(40~50명)을 대상으로 한다.","*단기간에 많은 내용을 교육하기 위한 방법이다.","10~20명이 상호 의사 전달하며 협동성을 기른다.","학습자가 프로그램 자료로 혼자 학습한다.","강사의 지휘·감독 아래 연습을 적용해 본다.","6명씩 소그룹으로 6분간 토의한다."],"나머지는 토의법, 프로그램 학습법, 실연법, 버즈 세션의 설명이다."],
+["D","노출 근로자 관리 방법에 해당하는 것을 모두 고르시오.",["*교육","*훈련","*보호구 착용","국소 배기","거리 증가","대체"],"국소 배기·대체는 오염원 관리, 거리 증가는 실내 공기 관리이다."],
+["F","화학 물질 경고 표시에 대한 설명으로 옳은 것을 모두 고르시오.",["*수입·제조자는 양도·제공하는 화학 물질의 용기 및 포장에 경고 표시를 한다.","*사업주는 작업장에서 사용하는 화학 물질을 담은 용기에 경고 표시를 한다.","*용기에 이미 경고 표시가 되어 있으면 사업주의 경고 표시는 예외이다.","사업주에게는 경고 표시 의무가 없다.","경고 표시는 근로자가 필요할 때 임의로 붙인다.","용기·포장 외의 방법으로 제공하면 아무 자료도 제공하지 않아도 된다."],"용기·포장 외의 방법으로 제공할 때는 경고 표시 기재 항목을 적은 자료를 제공해야 한다."],
+["G","작업환경 측정 대상 유해 인자의 분류와 종 수가 바르게 연결된 것을 모두 고르시오.",["*유기화합물 - 113종","*금속류 - 23종","*산 및 알칼리류 - 17종","가스상 물질 - 30종","분진 - 20종","허가 대상 물질 - 50종"],"가스상 물질 15종, 허가 대상 물질 14종, 분진 6종이다."],
+["H","성과 부진 원인 중 ‘공정 작업 허가서 운영 방안 미확인’의 세부 내용을 모두 고르시오.",["*실질적인 작업 허가서 작성 및 운영 여부","*허가 내용과 현장 상황의 일치 여부","*일일 담당 책임관 서명 여부","협의체 회의 미소집","법정 필수 이수 교육 미실시","회의 시 업무 분장 미실시"],"협의체 회의·업무 분장은 협의 및 의사소통 미흡, 법정 교육 미실시는 교육 시간 및 자격 부족에 해당한다."]
+];
+
+const FB = [
+{t:"b",a:"A",q:"( ① )는 불안전한 행동 및 상태가 원인이 되어 재산상의 손실을 가져오는 것이고, 인적·물적·환경적 피해의 원인이 될 수 있는 실제 또는 잠재적인 상태를 ( ② )이라 한다.",ans:[["사고"],["위험"]],exp:"사고 / 위험."},
+{t:"s",a:"A",q:"관리감독자의 직무 3가지를 쓰시오.",n:3,pool:[["기계·기구·설비의 안전보건 점검 및 이상 유무 확인","이상유무","설비점검"],["작업복·보호구·방호장치 점검과 착용·사용 교육·지도","보호구","작업복","방호"],["산업재해 보고 및 응급조치","보고","응급"],["작업장 정리 정돈 및 통로 확보 확인·감독","정리","통로"],["유해·위험 작업 시 특별 안전교육","특별"],["유해·위험 기계·기구 자체 검사","자체검사"]],exp:"관리감독자 직무 (1)~(7) 중 3가지."},
+{t:"b",a:"B",q:"위험성 평가에서는 유해·위험 요인이 ( ① ) 가능한 위험인지 판단하여 위험성을 결정하고, 허용 불가능한 요인은 ( ② ) 순위에 따라 개선 대책을 실행한다.",ans:[["허용"],["우선"]],exp:"위험성 평가 진행 방법 (4)~(6)."},
+{t:"b",a:"C",q:"채용 시 교육은 일용근로자 ( ① )시간 이상, 특별교육은 일용근로자 ( ② )시간 이상 실시한다.",ans:[["1"],["2"]],exp:"교재 <표 2-1> 기준."},
+{t:"s",a:"C",q:"관리감독자 정기 안전보건교육 내용 3가지를 쓰시오.",n:3,pool:[["작업 공정의 유해·위험과 재해 예방 대책","재해예방","공정"],["표준 안전 작업 방법 및 지도 요령","지도","표준"],["관리감독자의 역할과 임무","역할","임무"],["산업보건 및 직업병 예방","직업병"],["유해·위험 작업환경 관리","작업환경"],["산업안전보건법 및 일반 관리","일반관리","산업안전보건법"]],exp:"6가지 중 3가지."},
+{t:"b",a:"E",q:"( ① )은 사회자와 서기를 선출한 후 6명씩 6분간 토의하는 방법이고, ( ② )은 문제의 인식부터 결과 검토까지 5단계로 구성된다.",ans:[["버즈세션","버즈"],["문제법"]],exp:"버즈 세션 / 문제법."},
+{t:"b",a:"D",q:"대치(대체)는 일반적으로 물질 대체, 공정 대체, ( ① ) 대체로 구분하며, 그 예로 수동 → ( ② ) 전환이 있다.",ans:[["설비"],["자동"]],exp:"설비 대체의 예: 수동 → 자동."},
+{t:"s",a:"F",q:"교재에서 지급 대상 작업을 정해 둔 보호구 3가지를 쓰시오.",n:3,pool:[["안전모","안전모"],["안전대","안전대"],["안전화","안전화"],["보안경","보안경"],["보안면","보안면"],["절연용 보호구","절연"],["방염복","방염"],["방진 마스크","방진"],["방한모·방한복 등","방한"]],exp:"9가지 중 3가지."},
+{t:"b",a:"G",q:"안전보건 점검표는 일반 재해 예방 분야, ( ① ) 분야, 전기 및 ( ② ) 분야로 나누어 작성한다.",ans:[["기계"],["화공"]],exp:"4-1 수행 순서의 점검표 분야."},
+{t:"b",a:"H",q:"시정 조치는 식별된 부적합 사고 또는 사건의 근본적인 원인을 ( ① )하고 ( ② ) 방지를 위한 활동이다.",ans:[["제거"],["재발"]],exp:"원인 제공 부서에 시정 조치 요구."}
+];
+
+return {key:"S",name:"안전관리",code:"LM1902010212",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})(),
+(function(){
+const AREAS = {
+  A: "포장의 정의·기능·규격·취급",
+  B: "창고 관리 시스템(WMS·MES·ERP)",
+  C: "출하 검사·로트·AQL 판정",
+  D: "부적합품 관리·처리",
+  E: "보관의 개념·기능·창고 기능",
+  F: "보관의 원칙"
+};
+
+const OX = [
+["A","포장된 제품은 공간 효율을 위해 정한 적재 단수를 넘더라도 최대한 높이 쌓는다.","X","정한 적재 단수 이하로 쌓아 가지런히 정리하여 무너지지 않게 한다."],
+["B","WMS는 창고 업무 프로세스를 전산 정보화하여 적은 인원으로 쉽고 편리하게 창고 업무를 수행하게 하는 정보 시스템이다.","O","창고관리 시스템(WMS)의 정의."],
+["B","배차 관리 및 운송장 관리는 자재 창고의 기능이다.","X","제품 창고의 기능이다."],
+["C","AQL은 공정을 평균하여 만족하다고 생각되는 최대 불량률의 한계이다.","O","P% AQL이면 P% 이하 불량률 로트를 합격으로 한다."],
+["C","검사원은 검사 결과를 출하 검사 성적서에 기록하고, 완제품 검사 의뢰서에 합격·불합격 스탬프를 날인하여 로트의 대표 현품에 부착한다.","O","판정 후의 처리."],
+["D","의심스러운 제품은 합부 판정이 불분명하거나 부적합품이 오용·혼용될 우려가 있는 제품의 상태를 말한다.","O","부적합품의 종류 2."],
+["D","부적합품 처리에 대한 최종 승인은 관련 부서장이 한다.","X","부적합품 처리 승인은 대표이사가 한다."],
+["E","보관의 목적에는 수송비와 생산비의 절감, 수요와 공급의 조정이 포함된다.","O","그 밖에 생산 측면·마케팅 측면의 이점이 있다."],
+["F","명료성의 원칙은 관련 품목을 한 장소에 계통적으로 분리·보관하여 출하를 쉽게 하는 원칙이다.","X","설명은 네트워크 보관의 원칙이다. 명료성의 원칙은 작업원의 시각으로 보관품을 쉽게 식별하도록 보관한다."],
+["F","통로 대면 보관의 원칙은 창고 설계 및 창고 내 화물 흐름 활성화의 기본 원칙이다.","O","입출고를 쉽게 하기 위해 통로 면에 보관한다."]
+];
+
+const MC = [
+["A","포장된 제품의 안전 보관·관리를 위한 준수 사항으로 옳은 것을 모두 고르시오.",["*외부 보관 시 천막 또는 비닐로 덮어 손상·변형을 막는다.","*부적합 제품은 구별 가능한 곳에 분리 보관한다.","*제품 식별 라벨과 분류 보관된 제품의 일치 여부를 확인한다.","정한 적재 단수를 넘겨 최대한 높이 쌓는다.","온습도에 영향을 받는 제품도 창고 환경 조건과 관계없이 보관한다.","포장 취급 지침서 대신 작업자 판단에 따라 취급한다."],"그 밖에 온습도 환경 유지, 지침서·규격서에 맞는 취급을 준수한다."],
+["B","WMS의 특징으로 교재에 제시된 것을 모두 고르시오.",["*성능 측정(performance measurement)","*상호 연관된 공급 체인 프로세스","*재고 관리 시스템(inventory management system)","고객 관계 관리","제품 설계 관리","인사 급여 관리"],"WMS 특징: 성능 측정, 상호 연관된 공급 체인 프로세스, 재고 관리 노동 프로세스, 재고 관리 프로세스, 재고 관리 시스템."],
+["B","창고 관리 시스템의 기능으로 옳은 것을 모두 고르시오.",["*창고 내의 모든 실물과 정보가 일치한다.","*각 창고에 대한 실시간 재고 정보를 공유한다.","입·출고를 수기 전표로만 관리한다.","적재와 피킹을 작업자의 판단에만 의존한다.","정보의 신뢰성과 가용성을 낮춘다.","MES·ERP와 단절하여 독립적으로 운영한다."],"WMS는 MES·ERP와 연계해 자동화 범위를 넓히고 정보의 신뢰성·가용성을 높인다."],
+["C","샘플링 검사를 선택하는 경우를 모두 고르시오.",["*성능을 알기 위해 물품을 파괴해야 하는 파괴 검사인 경우","*연속체나 대량품이라 모든 제품을 검사하기 곤란한 경우","*약간의 부적합품을 허용하는 편이 경제적인 경우","부적합품이 조금이라도 섞이면 안 되는 경우","부적합품이 섞이면 안전 면에서 중대한 영향을 끼치는 경우","검사 비용이 적고 검사 효과가 큰 경우"],"나머지는 전수 검사를 선택하는 경우이다."],
+["C","AQL 적용 기준의 결점 구분과 수준이 바르게 연결된 것을 모두 고르시오.",["*치명 결점 - 0","*중 결점 - 0.65","*경 결점 - 1.5","치명 결점 - 1.5","중 결점 - 0","경 결점 - 0.65"],"<표 2-14> AQL 적용 기준."],
+["D","외관 검사에서 발견되는 부적합 예를 모두 고르시오.",["*PCB 크랙","*납땜 불량","*인쇄 상태 불량","제어 프로그램 문제","전원 공급 문제","부품 노화에 따른 동작 상태 변화"],"제어 프로그램·전원 공급은 규격(동작) 검사, 부품 노화는 초기 수명 검사의 부적합 예이다."],
+["D","부적합 제품 처리 시 주관 부서장의 역할을 모두 고르시오.",["*부적합품 보고서를 검토해 부적합 내용과 원인을 파악한다.","*재작성, 수정, 폐기에 대한 판정을 한다.","*채택된 처리 방안을 기록하고 관련 부서에 통보한다.","부적합품 처리를 최종 승인한다.","용역 성과품을 협력 업체에 직접 반품한다.","처리 방안 시행에 대한 작업 지시를 한다."],"최종 승인은 대표이사, 반품은 해당 부서장, 작업 지시는 관련 부서장의 역할이다."],
+["E","보관의 역할에 해당하는 것을 모두 고르시오.",["*소비 지점 가까이에서 배송 시간을 절약하는 고객 서비스의 최전선","*생산과 판매의 조정 및 완충","*배송·물류 센터에서 집산, 분류, 유통 가공, 조합 및 검사","제품 설계","판매 가격 결정","원재료 채굴"],"보관의 역할 (1)~(4) 중 일부."],
+["F","중량 특성·형상 특성의 원칙에 대한 설명으로 옳은 것을 모두 고르시오.",["*중량물과 대형물은 하층부에 보관한다.","*경량물과 소하물은 상층부에 보관한다.","*포장 모듈화에 맞는 표준품은 랙에 보관한다.","중량물은 상층부에 보관한다.","비표준품은 반드시 표준 랙에 맞춰 보관한다.","형상과 관계없이 모두 같은 방식으로 보관한다."],"비표준품은 형상에 따라 보관한다."],
+["F","보관의 원칙에 해당하는 것을 모두 고르시오.",["*회전대응 보관의 원칙","*네트워크 보관의 원칙","*위치 표시의 원칙","후입선출의 원칙","무작위 분산 보관의 원칙","무표시 보관의 원칙"],"보관의 원칙 10가지 중 일부."]
+];
+
+const FB = [
+{t:"b",a:"A",q:"포장 관련 규격 중 CEN은 ( ① ) 표준화 기구의 규격이고, GMP는 우수 ( ② ) 제조 및 품질 관리 기준이다.",ans:[["유럽"],["의약품"]],exp:"CEN: European committee for standardization / GMP: good manufacturing practice."},
+{t:"b",a:"B",q:"( ① )은 가공이 시작되었지만 완성되지 않은 제품이고, ( ② )는 상품 거래 시 주요 내용을 작성하는 문서이다.",ans:[["재공","재공품"],["인보이스","invoice"]],exp:"재공 / 인보이스."},
+{t:"s",a:"B",q:"생산 관리 시스템(MES)의 4가지 기능 중 3가지를 쓰시오.",n:3,pool:[["생산물류 정보","물류"],["품질 데이터 수집","품질"],["생산 기타 정보","기타"],["생산 운전 정보","운전"]],exp:"생산물류 정보, 품질 데이터 수집, 생산 기타 정보, 생산 운전 정보."},
+{en:true,t:"b",a:"C",q:"샘플링 검사는 샘플링 검사 기준( ① )에 의거해 시료 개수를 결정하고, 전수 검사는 고객 요구 시 ( ② ) 팀장이 필요하다고 판단하면 실시할 수 있다.",ans:[["KSA3109","KS A 3109","KSA 3109"],["품질"]],exp:"KS A 3109 / 품질 팀장."},
+{t:"b",a:"C",q:"생산 팀장은 공정 간 ( ① ) 검사를 실시하여 적합한 제품을 ( ② )로 구성해 품질 팀에 검사를 의뢰할 책임이 있다.",ans:[["자주"],["로트","lot"]],exp:"생산 팀장의 책임과 권한 (1)."},
+{t:"b",a:"D",q:"불합격된 로트는 부적합 조치 ( ① )를 발행하며, 생산 부서장은 재작업·재검사·수리 후 부적합 조치 ( ② )와 함께 재검사를 의뢰한다.",ans:[["요구서"],["대책서"]],exp:"판정 후의 처리 (2)."},
+{t:"s",a:"D",q:"포장 검사에서 발견되는 부적합 예 3가지를 쓰시오.",n:3,pool:[["도면 및 규격과 불일치","도면","규격"],["인쇄의 선명도 및 번짐","선명","번짐","인쇄"],["제품명, 제조 번호 표시 오류","제품명","제조번호","표시오류"],["불량 포장 자재","포장자재","자재"],["포장 접착·결속 상태 불량","접착","결속"]],exp:"5가지 중 3가지."},
+{t:"s",a:"E",q:"보관의 목적 3가지를 쓰시오.",n:3,pool:[["수송비와 생산비의 절감","수송비","생산비","절감"],["수요와 공급의 조정","수요","공급"],["생산 측면의 이점(숙성, 세금 연기)","숙성","세금","생산측면"],["마케팅 측면의 이점(신속 배달, 가치 상승)","마케팅","신속","가치"]],exp:"보관의 목적 4가지 중 3가지."},
+{t:"b",a:"F",q:"( ① )의 원칙은 보관품의 장소·선반 번호 등을 표시하고, ( ② )의 원칙은 작업원의 시각으로 보관품을 쉽게 식별하도록 보관한다.",ans:[["위치표시"],["명료성"]],exp:"위치 표시의 원칙 / 명료성의 원칙."},
+{en:true,t:"b",a:"F",q:"선입선출의 원칙은 영어로 First ( ① ) First ( ② )이다.",ans:[["in"],["out"]],exp:"FIFO: First In First Out."}
+];
+
+return {key:"H",name:"출하관리",code:"LM1902010210",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})(),
+(function(){
+const AREAS = {
+  A: "생산계획·총괄생산계획·대응 전략",
+  B: "일정계획·작업 우선순위 규칙",
+  C: "생산계획서·작업지시서·제조공정도",
+  D: "측정 시스템 분석(MSA)",
+  E: "생산진도 관리·진도관리 도표",
+  F: "문제 원인 분석·개선 도구·작업일지"
+};
+
+const OX = [
+["A","중기계획(1개월~1년)에는 총괄생산계획 혹은 생산수량계획이 해당한다.","O","계획 기간에 따른 분류."],
+["A","생산평준전략은 수요와 관계없이 생산능력을 일정하게 유지하므로 초과 재고나 납기 지연이 발생할 수 있다.","O","수요 증가에 대비해 재고를 유지하며, 재고유지비나 납기지연손실이 생긴다."],
+["B","EDD 규칙은 대기 중인 작업 중 여유시간이 가장 작은 것부터 처리하는 방식이다.","X","설명은 MST 규칙이다. EDD는 납기가 가장 빠른 작업부터 처리한다."],
+["B","평균 체류작업수가 많다는 것은 재공품 재고가 많다는 것을 의미한다.","O","평균 체류작업수 = 전체 체류시간 합 ÷ 작업시간 합."],
+["C","제조공정도에서 운반 기호의 지름은 가공 기호 지름의 1/2~1/3로 한다.","O","<표 1-6> 공정도시기호의 비고."],
+["C","적정재고는 수요를 100% 충족시키기 위해 재고를 무제한으로 확보하는 수준이다.","X","무제한 재고가 아니라 재고투자 절감(경제성)과 적기 수요 충족(효과성)을 동시에 만족시키는 수준이다."],
+["D","재현성은 한 명의 측정자가 동일 샘플을 반복 측정해 얻은 데이터의 분산이다.","X","설명은 반복성이다. 재현성은 다른 사람이 동일 샘플을 측정할 때 생기는 차이이다."],
+["E","마일스톤 차트는 간트 도표 위에 개시·종료 등 중요한 시점을 이정표로 표시해 중점 관리하는 방법이다.","O","단위 작업 상호 간의 선후 의존관계가 고려된 방법이다."],
+["F","체크시트는 두 변수의 관계를 시각적으로 표현하는 도구이다.","X","설명은 산점도이다. 체크시트는 데이터를 종류별로 기록하거나 누락·오류를 없애기 위한 도표이다."],
+["F","계통도에서는 상위 수준의 수단이 하위 수준의 목적이 된다.","O","목적과 수단의 계열을 계통적으로 전개한다."]
+];
+
+const MC = [
+["A","수요추구전략에 대한 설명으로 옳은 것을 모두 고르시오.",["*수요 변화에 따라 생산능력을 변화시킨다.","*인력의 해고·추가 고용, 설비의 매각·추가 구입으로 능력을 조절한다.","*기술 인력이 필요하지 않을 때 적용 가능하다.","수요와 관계없이 생산능력을 일정하게 유지한다.","수요 증가에 대비해 재고를 유지한다.","기술 인력이 필요할 때 주로 적용한다."],"나머지는 생산평준전략(Level)의 특징이다."],
+["A","생산계획에서 생산을 시작하기 전에 미리 정하는 사항을 모두 고르시오.",["*생산할 제품의 종류, 수량, 가격","*생산 방법과 장소","*생산 일정","경쟁사 판매 가격","직원 급여 수준","광고 매체 선정"],"판매계획을 토대로 가장 경제적이고 합리적인 예정을 세운다."],
+["B","존슨의 규칙에 대한 설명으로 옳은 것을 모두 고르시오.",["*작업장이 2개일 때 전체 완료시간을 최소화하는 순서를 정한다.","*가장 짧은 가공시간이 기계 1이면 그 작업을 제일 먼저 수행한다.","*가장 짧은 가공시간이 기계 2이면 그 작업을 맨 나중에 수행한다.","가장 긴 가공시간부터 찾아 순서를 정한다.","작업장이 3개 이상일 때만 적용한다.","최단 가공시간이 두 개 이상이면 두 작업 모두 제외한다."],"최단 가공시간이 둘 이상이면 그중 하나를 임의로 선택한다."],
+["B","우선순위 규칙 평가 기준의 설명으로 옳은 것을 모두 고르시오.",["*평균 체류시간 - 작업장 도착부터 완성되어 빠져나가기까지의 경과시간","*평균 지연시간 - 납기보다 늦게 완성된 작업의 납품 지연시간","평균 체류작업수 - 전체 작업시간의 합","평균 체류시간 - 대기시간은 제외한 작업시간만","평균 지연시간 - 납기보다 일찍 완성된 시간","평균 체류작업수 - 적을수록 재공품 재고가 많음"],"체류시간에는 대기시간도 포함되며, 체류작업수가 많을수록 재공품이 많다."],
+["C","작업지시서가 아닌 ‘생산계획서’의 항목에 해당하는 것을 모두 고르시오.",["*품명 및 품번","*UPH","*적정재고","제작번호","확인자","작업 장소"],"제작번호, 확인자, 작업 장소는 작업지시서 항목이다."],
+["C","공정도시기호 중 보조 도시기호와 의미가 바르게 연결된 것을 모두 고르시오.",["*흐름선 - 요소 공정의 순서관계","*구분 - 공정계열에서 관리상의 구분","*생략 - 공정계열 일부분의 생략","흐름선 - 품질 합부 판정","구분 - 재료의 모양을 바꾸는 과정","생략 - 계획에 따른 저장"],"<표 1-6> 보조 도시기호."],
+["D","측정 시스템 분석의 ‘측정 전’ 고려사항을 모두 고르시오.",["*사람, 샘플 및 반복 측정 수치를 고정한다.","*전체 프로세스를 표시할 수 있는 샘플을 주의해서 선정한다.","*계측기 작동이 가능한 것을 원칙으로 한다.","측정자가 측정 요소 번호를 확인하며 순서대로 측정한다.","샘플은 아무것이나 편하게 고른다.","측정할 때마다 측정 방법을 바꾼다."],"측정 중에는 측정자가 요소 번호를 알 수 없도록 임의로 측정한다."],
+["E","네트워크도의 사용 목적을 모두 고르시오.",["*프로젝트에 필요한 활동들의 선후관계를 그림으로 나타낸다.","*완성 일자를 추정하고 주경로(Critical Path)를 찾는다.","*진척도를 모니터하며 일정 관리를 추진한다.","일의 결과와 원인을 계통적으로 정리한다.","데이터를 종류별로 빠르게 체크한다.","두 변수의 상관관계를 시각화한다."],"나머지는 특성요인도, 체크시트, 산점도의 용도이다."],
+["F","PDPC가 주로 이용되는 경우를 모두 고르시오.",["*불확실성이 큰 새 과제에서 우발적 상황에 대비할 때","*생소한 활동의 문제를 사전에 도출해 피해를 최소화할 때","*불완전한 계획 때문에 생길 문제를 예기하고 영향을 따질 때","두 변수의 상관관계를 확인할 때","작업의 선후관계로 일정을 관리할 때","결과와 원인을 물고기 뼈 모양으로 정리할 때"],"PDPC(Process Decision Program Chart)의 용도."],
+["F","연관도에 대한 설명으로 옳은 것을 모두 고르시오.",["*인과관계를 설명해 복잡한 문제의 연결 관계를 분석한다.","*요인이 복잡하게 얽힌 문제를 정리하기 좋다.","*친화도·특성요인도·계통도를 그린 후 아이디어의 연관성을 조사할 때 쓴다.","목적과 수단을 계통적으로 전개한다.","20:80 법칙을 막대그래프로 나타낸다.","간트 도표 위에 이정표를 표시한다."],"나머지는 계통도, 파레토 차트, 마일스톤 차트의 설명이다."]
+];
+
+const FB = [
+{t:"b",a:"A",q:"생산(수량)계획은 일정 기간 동안 어떤 제품을 얼마만큼 생산할지 큰 테두리를 정하는 ( ① ) 계획이며, 실제 작업을 위해 언제 착수·완료할지에 따라 ( ② )을 수립한다.",ans:[["예정"],["일정계획"]],exp:"생산(수량)계획 → 일정계획."},
+{t:"s",a:"A",q:"총괄생산계획에서 조정하는 생산능력원 3가지를 쓰시오.",n:3,pool:[["노동인원의 변동(고용 및 해고)","노동","고용","해고"],["생산율의 변동(잔업, 단축근무)","생산율","잔업","단축"],["재고 수준의 변동(재고 이용)","재고"],["외주 이용","외주"]],exp:"4가지 중 3가지."},
+{en:true,t:"b",a:"B",q:"FCFS는 First-Come First-( ① )의 약자이고, EDD는 Earliest ( ② ) Date의 약자이다.",ans:[["served"],["due"]],exp:"FCFS: 선착순 / EDD: 납기 우선."},
+{en:true,t:"s",a:"B",q:"개별생산시스템의 작업 우선순위 결정 규칙 3가지를 쓰시오.",n:3,pool:[["FCFS 규칙","fcfs","선착순"],["SPT 규칙","spt"],["EDD 규칙","edd"],["MST 규칙","mst"]],exp:"FCFS, SPT, EDD, MST 중 3가지."},
+{en:true,t:"b",a:"C",q:"( ① )는 공정 도시기호를 이용해 공정 전체의 흐름을 보여 주는 도표이며, ( ② ) 3002 공정도시기호를 이용해 도표화한다.",ans:[["제조공정도"],["KSA","KS A","KS"]],exp:"제조공정도 / KS A 3002."},
+{t:"b",a:"C",q:"공정도시기호에서 □는 ( ① ) 검사, ◇는 ( ② ) 검사를 나타낸다.",ans:[["수량"],["품질"]],exp:"□ 수량 검사 / ◇ 품질 검사."},
+{t:"b",a:"D",q:"( ① )은 측정 기기의 범위가 변해도 측정값 크기에 상관없이 일정한 차이를 나타내는 것이고, ( ② )은 장시간 동일 장비·샘플을 측정할 때 시간에 따라 생기는 평균값의 차이이다.",ans:[["선형성"],["안정성"]],exp:"선형성 / 안정성."},
+{t:"b",a:"E",q:"간트 차트는 종축에 작업명을 작업 순서대로 배열하고 횡축에 ( ① )를 표기한 뒤, 작업의 시작과 끝을 ( ② )의 길이로 나타낸 그래프이다.",ans:[["날짜","일정","시간"],["횡선","막대","가로선"]],exp:"간트 차트(막대그래프)."},
+{t:"s",a:"F",q:"생산 문제 원인 분석 방법(생산실적 분석 방법) 3가지를 쓰시오.",n:3,pool:[["파레토 차트","파레토"],["특성요인도","특성요인"],["체크시트","체크"],["산점도","산점"]],exp:"파레토 차트, 특성요인도, 체크시트, 산점도 중 3가지."},
+{t:"b",a:"F",q:"파레토 차트는 문제의 원인을 ‘사소한 ( ① )’와 ‘중요한 ( ② )’로 분류한다.",ans:[["다수"],["소수"]],exp:"trivial many / vital few."}
+];
+
+return {key:"P",name:"생산활동",code:"LM1902020208",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})()
+];
+(function(){
+let U,AREAS,AREA_KEYS,TYPES;
+function buildTypes(u){const OX=u.OX,MC=u.MC,FB=u.FB,P=u.key+"-";return [
+  {id:"ox",name:"OX",sub:"100문항",items:OX.map((x,i)=>({id:P+"OX-"+pad(i+1),no:i+1,a:x[0],q:x[1],ans:x[2],exp:x[3]}))},
+  {id:"mc",name:"다중선택",sub:"6지↑·정답 2~3개",items:MC.map((x,i)=>{const o=x[2].map((t,j)=>({t:t.replace(/^\*/,""),c:t[0]==="*",j}));return {id:P+"MC-"+pad(i+1),no:i+1,a:x[0],q:x[1],opts:seeded(o,i+7),exp:x[3]}})},
+  {id:"fb",name:"빈칸·단답",sub:"빈칸 2개 / 2~3개 답",items:FB.map((x,i)=>Object.assign({id:P+"FB-"+pad(i+1),no:i+1},x))}
+]}
+function setUnit(){U=UNITS.find(u=>u.key===state.unit)||UNITS[0];state.unit=U.key;AREAS=U.AREAS;AREA_KEYS=Object.keys(AREAS);TYPES=buildTypes(U);$("ucode").textContent=U.name+" ("+U.code+")"}
+function pad(n){return String(n).padStart(3,"0")}
+function seeded(arr,seed){const a=arr.slice();let s=seed*9301+49297;for(let i=a.length-1;i>0;i--){s=(s*9301+49297)%233280;const r=Math.floor(s/233280*(i+1));[a[i],a[r]]=[a[r],a[i]]}return a}
+const CIRC="①②③④⑤⑥⑦⑧⑨⑩";
+const norm=s=>String(s||"").toLowerCase().replace(/[\s·.,\-()\/'"‘’“”「」\[\]:;~]/g,"");
+
+let state={unit:"S",tab:"ox",area:"all",showAns:false,seed:{},res:{},inp:{},name:""};
+try{const sv=JSON.parse(localStorage.getItem("l2-combined-5")||"null");if(sv)Object.assign(state,sv)}catch(e){}
+function save(){try{localStorage.setItem("l2-combined-5",JSON.stringify(state))}catch(e){}}
+
+const $=id=>document.getElementById(id);
+$("stu").value=state.name||"";
+$("stu").addEventListener("input",e=>{state.name=e.target.value;save()});
+if(!state.seed)state.seed={};setUnit();state.showAns=false;
+
+function renderUnits(){
+  $("unitrow").innerHTML=UNITS.map(u=>{const all=buildTypes(u).flatMap(t=>t.items),d=all.filter(q=>state.res[q.id]!==undefined).length;
+    return `<button class="unit" role="tab" type="button" data-u="${u.key}" aria-selected="${state.unit===u.key}"><span class="t">${u.name}</span><span class="s">${d}/${all.length}</span></button>`}).join("");
+  $("unitrow").querySelectorAll(".unit").forEach(b=>b.onclick=()=>{state.unit=b.dataset.u;state.area="all";setUnit();save();renderAll();window.scrollTo({top:0})});
+}
+function renderTabs(){
+  $("tabrow").innerHTML=TYPES.map(t=>{const done=t.items.filter(q=>state.res[q.id]!==undefined).length;
+    return `<button class="tab" role="tab" type="button" data-t="${t.id}" aria-selected="${state.tab===t.id}"><span class="t">${t.name}</span><span class="s">${done}/${t.items.length}</span></button>`}).join("");
+  $("tabrow").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.tab=b.dataset.t;save();renderAll();window.scrollTo({top:0})});
+}
+function curType(){return TYPES.find(t=>t.id===state.tab)}
+function renderChips(){
+  const T=curType();
+  const c=k=>T.items.filter(q=>k==="all"||q.a===k).length;
+  $("chips").innerHTML=[`<button class="chip" type="button" data-a="all" aria-pressed="${state.area==="all"}">전체 ${c("all")}</button>`]
+   .concat(AREA_KEYS.map(k=>`<button class="chip" type="button" data-a="${k}" aria-pressed="${state.area===k}"><span class="k">${k}</span>${AREAS[k]} ${c(k)}</button>`)).join("");
+  $("chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{state.area=b.dataset.a;save();renderAll()});
+}
+function visible(){
+  const T=curType();let it=T.items.filter(q=>state.area==="all"||q.a===state.area);
+  const sd=state.seed[U.key+state.tab];if(sd)it=seeded(it,sd);
+  return it;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function qHTML(q,n){
+  const r=state.res[q.id],cls=r===undefined?"":(r?"ok":"ng"),inp=state.inp[q.id],lock=r!==undefined,dis=lock?" disabled":"";
+  let body="",text=esc(q.q),ansTxt="";
+  if(state.tab==="ox"){
+    body=`<div class="ox">${["O","X"].map(v=>`<button class="oxb" type="button" data-v="${v}" aria-pressed="${inp===v}" aria-label="${v}"${dis}>${v}</button>`).join("")}</div>`;
+    ansTxt=q.ans;
+  }else if(state.tab==="mc"){
+    const sel=inp||[];const graded=r!==undefined||state.showAns;
+    const sd=state.seed[U.key+"mc"],opts=sd?seeded(q.opts,sd+q.no*31):q.opts;
+    body=`<div class="opts">${opts.map((o,k)=>{let oc="";if(graded){const ch=sel.includes(o.j);oc=o.c&&ch?"right":(o.c?"miss":(ch?"wrong":""))}
+      return `<label class="opt ${oc}"><input type="checkbox" id="${q.id}-${o.j}" data-j="${o.j}" ${sel.includes(o.j)?"checked":""}${dis}><span class="n">${CIRC[k]}</span><span>${esc(o.t)}</span></label>`}).join("")}</div>`;
+    ansTxt=opts.map((o,k)=>o.c?CIRC[k]:null).filter(Boolean).join(", ")+` (${q.opts.filter(o=>o.c).length}개)`;
+    text+=`<span class="type-tag">정답 2~3개</span>`;
+  }else{
+    if(q.t==="b"){
+      text=esc(q.q).replace(/\(\s*①\s*\)/g,'<span class="blank">①</span>').replace(/\(\s*②\s*\)/g,'<span class="blank">②</span>');
+      const v=inp||["",""],marks=state.inp[q.id+"#m"]||[];
+      body=`<div class="fills">${["①","②"].map((l,k)=>`<div class="fill-row"><span class="lab">${l}</span><input type="text" id="${q.id}-${k}" data-k="${k}" value="${esc(v[k]||"")}" class="${marks[k]===undefined?"":(marks[k]?"right":"wrong")}" autocomplete="off" aria-label="빈칸 ${l}"${dis}></div>`).join("")}</div>`;
+      ansTxt=`① ${q.ans[0][0]}  ② ${q.ans[1][0]}`+(q.any?" (순서 무관)":"");
+      text+=`<span class="type-tag">빈칸</span>`;
+    }else{
+      const v=inp||[],marks=state.inp[q.id+"#m"]||[];
+      body=`<div class="fills">${Array.from({length:q.n},(_,k)=>`<div class="fill-row"><span class="lab">${CIRC[k]}</span><input type="text" id="${q.id}-${k}" data-k="${k}" value="${esc(v[k]||"")}" class="${marks[k]===undefined?"":(marks[k]?"right":"wrong")}" autocomplete="off" aria-label="답 ${k+1}"${dis}></div>`).join("")}</div>`;
+      ansTxt=q.pool.map(p=>p[0]).join(" / ")+`  → 이 중 ${q.n}가지`;
+      text+=`<span class="type-tag">단답 ${q.n}개</span>`;
+    }
+  }
+  const show=r!==undefined||state.showAns;
+  return `<article class="q ${cls}" data-id="${q.id}" data-n="${n}">
+    <div class="qhead"><span class="qno">${n}</span><div class="qtext">${text}</div></div>
+    ${body}
+    <div class="qfoot">${lock?"":`<button class="btn chk" type="button">채점</button>`}${r===undefined?"":`<span class="verdict ${r?"ok":"ng"}">${r?"정답":"오답"+(state.tab==="mc"&&state.inp[q.id+"#p"]?" · "+state.inp[q.id+"#p"]:"")}</span>`}</div>
+    ${show?`<div class="ans"><span class="a">정답: ${esc(ansTxt)}</span><span class="x">${esc(q.exp)}</span></div>`:""}
+  </article>`;
+}
+
+function grade(q){
+  const inp=state.inp[q.id];
+  if(state.tab==="ox"){if(!inp)return;state.res[q.id]=inp===q.ans;return}
+  if(state.tab==="mc"){const sel=inp||[];if(!sel.length)return;
+    const cor=q.opts.filter(o=>o.c).map(o=>o.j);const hit=sel.filter(j=>cor.includes(j)).length,bad=sel.length-hit;
+    state.res[q.id]=hit===cor.length&&bad===0;state.inp[q.id+"#p"]=`정답 ${cor.length}개 중 ${hit}개 선택`+(bad?`, 오선택 ${bad}개`:"");return}
+  const v=(inp||[]).map(norm);if(!v.some(Boolean))return;
+  if(q.t==="b"){
+    const m=(x,alts)=>alts.some(a=>norm(a)===x);
+    let k=[m(v[0],q.ans[0]),m(v[1],q.ans[1])];
+    if(q.any&&!(k[0]&&k[1])){const sw=[m(v[0],q.ans[1]),m(v[1],q.ans[0])];if(sw[0]&&sw[1])k=sw}
+    state.inp[q.id+"#m"]=k;state.res[q.id]=k[0]&&k[1];
+  }else{
+    const used=new Set(),k=[];
+    for(let i=0;i<q.n;i++){const x=v[i]||"";let ok=false;
+      if(x.length>=2)for(let p=0;p<q.pool.length;p++){if(used.has(p))continue;const kws=[q.pool[p][0]].concat(q.pool[p].slice(1)).map(norm);
+        if(kws.some(w=>w&&(x.includes(w)||(x.length>=3&&w.includes(x))))){used.add(p);ok=true;break}}
+      k.push(ok)}
+    state.inp[q.id+"#m"]=k;state.res[q.id]=k.every(Boolean);
+  }
+}
+
+function renderList(){
+  const it=visible();
+  if(!it.length){$("list").innerHTML='<p class="empty">이 영역에는 문항이 없습니다.</p>';return}
+  let html="",last=null;
+  it.forEach((q,i)=>{if(!state.seed[U.key+state.tab]&&q.a!==last){last=q.a;const n=it.filter(x=>x.a===q.a).length;
+      html+=`<div class="areahead"><span class="k">${q.a}</span><h2>${AREAS[q.a]}</h2><span class="c">${n}문항</span></div>`}
+    html+=qHTML(q,i+1)});
+  $("list").innerHTML=html;
+}
+function renderScore(){
+  const T=curType(),it=T.items;const done=it.filter(q=>state.res[q.id]!==undefined),ok=done.filter(q=>state.res[q.id]);
+  const pct=done.length?Math.round(ok.length/done.length*100):0;
+  const bars=AREA_KEYS.map(k=>{const a=it.filter(q=>q.a===k),d=a.filter(q=>state.res[q.id]!==undefined),o=d.filter(q=>state.res[q.id]);
+    const w=d.length?o.length/d.length*100:0;return `<div class="bar" title="${AREAS[k]}"><span class="k">${k}</span><span class="track"><span class="fill" style="width:${w}%;display:block"></span></span><span class="n">${o.length}/${d.length}/${a.length}</span></div>`}).join("");
+  $("score").innerHTML=`<div class="head"><span class="big">${ok.length}<small> / ${done.length} 채점 · 정답률 ${pct}%</small></span><span class="note">${T.name} ${it.length}문항 중 ${done.length}문항 채점됨</span></div>
+    <div class="bars">${bars}</div><p class="note">영역별 막대: 맞힌 수 / 채점한 수 / 전체 문항 수</p>`;
+}
+function renderAll(){renderUnits();renderTabs();renderChips();renderList();renderScore()}
+
+$("list").addEventListener("click",e=>{
+  const art=e.target.closest(".q");if(!art)return;const T=curType(),q=T.items.find(x=>x.id===art.dataset.id);
+  if(state.res[q.id]!==undefined)return;
+  if(e.target.closest(".oxb")){state.inp[q.id]=e.target.closest(".oxb").dataset.v;save();art.outerHTML=qHTML(q,art.dataset.n);return}
+  if(e.target.closest(".chk")){collect(art,q);grade(q);save();art.outerHTML=qHTML(q,art.dataset.n);renderScore();renderTabs()}
+});
+$("list").addEventListener("change",e=>{
+  const art=e.target.closest(".q");if(!art)return;const q=curType().items.find(x=>x.id===art.dataset.id);if(state.res[q.id]!==undefined)return;collect(art,q);save();
+});
+$("list").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.matches(".fill-row input")){const art=e.target.closest(".q");const q=curType().items.find(x=>x.id===art.dataset.id);if(state.res[q.id]!==undefined)return;collect(art,q);grade(q);save();art.outerHTML=qHTML(q,art.dataset.n);renderScore();renderTabs()}
+});
+function collect(art,q){
+  if(state.tab==="mc"){state.inp[q.id]=[...art.querySelectorAll("input:checked")].map(i=>+i.dataset.j)}
+  else if(state.tab==="fb"){state.inp[q.id]=[...art.querySelectorAll(".fill-row input")].map(i=>i.value)}
+}
+$("gradeAll").onclick=()=>{const arts=[...$("list").querySelectorAll(".q")];const T=curType();
+  arts.forEach(a=>{const q=T.items.find(x=>x.id===a.dataset.id);if(state.res[q.id]!==undefined)return;collect(a,q);grade(q)});save();renderAll()};
+$("resetTab").onclick=function(){
+  if(this.dataset.arm!=="1"){this.dataset.arm="1";this.textContent="한 번 더 누르면 답이 지워지고 섞입니다";setTimeout(()=>{this.dataset.arm="";this.textContent="다시 풀기"},3000);return}
+  curType().items.forEach(q=>{delete state.res[q.id];Object.keys(state.inp).forEach(k=>{if(k===q.id||k.startsWith(q.id+"#"))delete state.inp[k]})});
+  state.seed[U.key+state.tab]=1+Math.floor(Math.random()*999983);
+  this.dataset.arm="";this.textContent="다시 풀기";save();renderAll();window.scrollTo({top:0})};
+$("copyRes").onclick=async()=>{
+  const rows=[["이름","문항ID","유형","영역","정오"].join(",")];
+  rows[0]=["이름","능력단위","문항ID","유형","영역","정오"].join(",");const sums=[];
+  UNITS.forEach(u=>{const TT=buildTypes(u);TT.forEach(T=>T.items.forEach(q=>{if(state.res[q.id]!==undefined)rows.push([`"${(state.name||"").replace(/"/g,"'")}"`,u.name,q.id,T.name,q.a,state.res[q.id]?"O":"X"].join(","))}));
+    const all=TT.flatMap(T=>T.items),d=all.filter(q=>state.res[q.id]!==undefined);sums.push(`${u.name} ${d.filter(q=>state.res[q.id]).length}/${d.length}`)});
+  const sum=sums.join(" | ");
+  const txt=`# ${state.name||"(이름 미입력)"} · ${sum}\n`+rows.join("\n");
+  $("copyText").value=txt;
+  try{await navigator.clipboard.writeText(txt);$("copyRes").textContent="복사됨";setTimeout(()=>$("copyRes").textContent="결과 복사",1800);$("copyWrap").hidden=true}
+  catch(err){$("copyWrap").hidden=false;$("copyText").focus();$("copyText").select()}
+};
+
+function ansOf(q,tid){
+  if(tid==="ox")return q.ans;
+  if(tid==="mc")return q.opts.filter(o=>o.c).map(o=>o.t).join(" / ");
+  if(q.t==="b")return `① ${q.ans[0][0]}  ② ${q.ans[1][0]}`;
+  return q.pool.map(p=>p[0]).join(" / ")+` (이 중 ${q.n}가지)`;
+}
+function myOf(q,tid){
+  const v=state.inp[q.id];if(v===undefined||v===null)return "(무응답)";
+  if(tid==="ox")return v;
+  if(tid==="mc")return q.opts.filter(o=>v.includes(o.j)).map(o=>o.t).join(" / ")||"(선택 없음)";
+  return v.map((x,i)=>(q.t==="b"?"①②"[i]:CIRC[i])+" "+(x||"—")).join("  ");
+}
+const gcls=p=>p>=80?"g-hi":(p>=60?"g-mid":"g-lo");
+function reportData(){
+  return UNITS.map(u=>{const TT=buildTypes(u);
+    const types=TT.map(T=>{const it=T.items,ok=it.filter(q=>state.res[q.id]===true).length,dn=it.filter(q=>state.res[q.id]!==undefined).length;return {id:T.id,name:T.name,ok,dn,total:it.length}});
+    const all=TT.flatMap(T=>T.items.map(q=>({q,T})));
+    const ok=all.filter(x=>state.res[x.q.id]===true).length,dn=all.filter(x=>state.res[x.q.id]!==undefined).length;
+    const areas=Object.keys(u.AREAS).map(k=>{const a=all.filter(x=>x.q.a===k),d=a.filter(x=>state.res[x.q.id]!==undefined),o=d.filter(x=>state.res[x.q.id]===true);return {k,name:u.AREAS[k],ok:o.length,dn:d.length,total:a.length}});
+    const wrong=all.filter(x=>state.res[x.q.id]===false);
+    return {u,types,ok,dn,total:all.length,areas,wrong}});
+}
+function renderReport(banner){
+  const D=reportData(),TOK=D.reduce((s,d)=>s+d.ok,0),TDN=D.reduce((s,d)=>s+d.dn,0),TT=D.reduce((s,d)=>s+d.total,0);
+  const score=Math.round(TOK/TT*100),acc=TDN?Math.round(TOK/TDN*100):0;
+  const now=new Date(),ds=`${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const typeNames=D[0].types.map(t=>t.name);
+  const rows=D.map(d=>{const p=Math.round(d.ok/d.total*100);return `<tr><td>${d.u.name}</td>${d.types.map(t=>`<td>${t.ok}/${t.total}${t.dn<t.total?`<br><small>미채점 ${t.total-t.dn}</small>`:""}</td>`).join("")}<td>${d.ok}/${d.total}</td><td><span class="grade ${gcls(p)}">${p}</span></td></tr>`}).join("");
+  const colSum=typeNames.map((_,i)=>{const o=D.reduce((s,d)=>s+d.types[i].ok,0),t=D.reduce((s,d)=>s+d.types[i].total,0);return `<td>${o}/${t}</td>`}).join("");
+  const areaHTML=D.filter(d=>d.dn>0).map(d=>`<div><h3>${d.u.name} 영역별 정답률</h3><div class="rp-areas">${d.areas.map(a=>{const p=a.dn?Math.round(a.ok/a.dn*100):0,weak=a.dn&&p<60;
+      return `<div class="rp-area ${weak?"weak":""}" title="${esc(a.name)}"><span class="k">${a.k}${weak?" ⚠":""}</span><span class="nm">${esc(a.name)}</span><span class="bar2"><i style="width:${p}%"></i></span><span class="v">${a.ok}/${a.dn}${a.dn<a.total?` (총${a.total})`:""}</span><span class="v">${a.dn?p+"%":"-"}</span></div>`}).join("")}</div></div>`).join("");
+  const weakList=D.flatMap(d=>d.areas.filter(a=>a.dn&&a.ok/a.dn<0.6).map(a=>`${d.u.name} ${a.k}(${a.name})`));
+  const wrongs=D.flatMap(d=>d.wrong.map(x=>({u:d.u,...x})));
+  const wrongHTML=wrongs.length?`<ul class="rp-wrong">${wrongs.map(x=>`<li><span class="meta2">${x.u.name} · ${x.T.name} · ${x.q.a} ${esc(x.u.AREAS[x.q.a])} · ${x.q.id}</span><span>${esc(x.q.q)}</span><span class="my">내 답: ${esc(myOf(x.q,x.T.id))}</span><span class="ok">정답: ${esc(ansOf(x.q,x.T.id))}</span></li>`).join("")}</ul>`:'<p class="note">틀린 문제가 없습니다.</p>';
+  $("report").innerHTML=`${banner?`<div class="done-banner">${esc(banner)}</div>`:""}
+   <h2>성적표 <small>${esc(state.name||"(이름 미입력)")} · ${ds}</small></h2>
+   <div class="rp-total"><div><b>${score}점</b><span>100점 환산 (전체 ${TT}문항 기준)</span></div><div><b>${TOK}/${TDN}</b><span>맞힌 수 / 채점한 수 · 정답률 ${acc}%</span></div><div><b>${TT-TDN}</b><span>아직 채점하지 않은 문항</span></div></div>
+   <div><h3>능력단위·유형별 점수</h3><div class="rp-wrap"><table class="rp-table"><thead><tr><th>능력단위</th>${typeNames.map(n=>`<th>${n}</th>`).join("")}<th>합계</th><th>점수</th></tr></thead><tbody>${rows}<tr class="sum"><td>전체</td>${colSum}<td>${TOK}/${TT}</td><td><span class="grade ${gcls(score)}">${score}</span></td></tr></tbody></table></div><p class="note">점수 = 맞힌 수 ÷ 전체 문항 수 × 100 (채점하지 않은 문항은 0점). 80점 이상 초록, 60~79 노랑, 60 미만 빨강.</p></div>
+   <div><h3>보충이 필요한 영역</h3><p class="note" style="font-size:13.5px">${weakList.length?esc(weakList.join(", ")):"정답률 60% 미만인 영역이 없습니다."}</p></div>
+   ${areaHTML}
+   <div><h3>오답 노트 (${wrongs.length}문항)</h3>${wrongHTML}</div>
+   <div class="rp-tools"><button class="btn primary" type="button" id="rpCopy">성적표 복사</button><button class="btn" type="button" id="rpClose">닫기</button></div>`;
+  $("report").hidden=false;
+  $("rpClose").onclick=()=>{$("report").hidden=true};
+  $("rpCopy").onclick=async()=>{
+    const L=[`[성적표] ${state.name||"(이름 미입력)"} · ${ds}`,`총점 ${score}점 (맞힌 수 ${TOK}/${TT}, 채점 ${TDN})`,""];
+    D.forEach(d=>{L.push(`■ ${d.u.name}: ${d.ok}/${d.total} (${Math.round(d.ok/d.total*100)}점) — `+d.types.map(t=>`${t.name} ${t.ok}/${t.total}`).join(", "))});
+    L.push("",`보충 필요 영역: ${weakList.join(", ")||"없음"}`,"",`오답 ${wrongs.length}문항`);
+    wrongs.forEach(x=>L.push(`- [${x.u.name}/${x.T.name}/${x.q.a}] ${x.q.q} → 정답: ${ansOf(x.q,x.T.id)}`));
+    const txt=L.join("\n");$("copyText").value=txt;
+    try{await navigator.clipboard.writeText(txt);$("rpCopy").textContent="복사됨";setTimeout(()=>{const b=$("rpCopy");if(b)b.textContent="성적표 복사"},1800);$("copyWrap").hidden=true}
+    catch(err){$("copyWrap").hidden=false;$("copyText").focus();$("copyText").select()}
+  };
+}
+function openReport(banner){renderReport(banner);$("report").scrollIntoView({behavior:"smooth",block:"start"})}
+$("showReport").onclick=()=>openReport("");
+const _renderScore=renderScore;
+renderScore=function(){_renderScore();
+  if(!state.doneShown)state.doneShown={};
+  const its=buildTypes(U).flatMap(T=>T.items),all=its.every(q=>state.res[q.id]!==undefined);
+  if(all&&!state.doneShown[U.key]){state.doneShown[U.key]=true;save();openReport(`${U.name} ${its.length}문항을 모두 풀었습니다.`)}
+  else if(!all&&state.doneShown[U.key]){state.doneShown[U.key]=false;save()}
+  if(!$("report").hidden)renderReport($("report").querySelector(".done-banner")?.textContent||"");
+};
+renderAll();
+})();
+</script>
+
+</body>
+</html>
